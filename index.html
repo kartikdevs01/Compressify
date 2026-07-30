@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Compressify compresses your images privately in your browser." />
+  <title>Compressify — Smart image compression</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <header class="site-header container">
+    <a class="brand" href="#top" aria-label="Compressify home"><span class="brand-mark">C</span>Compressify</a>
+    <nav aria-label="Main navigation"><a href="#compress">Compress</a><a href="#faq">FAQ</a><a href="#contact">Contact</a></nav>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode"><span>☀</span><span>☾</span></button>
+  </header>
+
+  <main id="top">
+    <section class="hero container">
+      <p class="eyebrow">PRIVATE • FAST • IN YOUR BROWSER</p>
+      <h1>Images, <em>perfected.</em><br />In less space.</h1>
+      <p class="hero-copy">A refined way to make your JPG, PNG, and WebP images smaller—without sending a single file to a server.</p>
+      <a class="primary-button" href="#compress">Start compressing <span>→</span></a>
+      <div class="trust-row"><span>✦ 100% browser based</span><span>✦ No sign-up</span><span>✦ Always private</span></div>
+    </section>
+
+    <section class="compress-section container" id="compress" aria-labelledby="compress-title">
+      <div class="section-heading"><div><p class="eyebrow">YOUR WORKSPACE</p><h2 id="compress-title">Compress an image</h2></div><span class="format-badge">JPG · PNG · WEBP</span></div>
+      <div class="compress-card">
+        <div class="drop-zone" id="dropZone" tabindex="0" role="button" aria-label="Choose an image or drop it here">
+          <input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp" hidden />
+          <div class="upload-icon">↑</div><h3>Drop your image here</h3><p>or <button type="button" id="browseButton">browse from your device</button></p><small>Maximum recommended size: 25 MB</small>
+        </div>
+        <div class="editor hidden" id="editor">
+          <div class="quality-panel">
+            <div><p class="eyebrow">COMPRESSION LEVEL</p><h3>Find your perfect balance</h3></div>
+            <output id="qualityOutput" for="qualitySlider">80%</output>
+            <input id="qualitySlider" type="range" min="10" max="100" value="80" aria-label="Compression quality" />
+            <div class="range-labels"><span>Smallest file</span><span>Best quality</span></div>
+          </div>
+          <div class="target-panel">
+            <div><p class="eyebrow">TARGET FILE SIZE</p><h3>Let Compressify find the right quality</h3></div>
+            <div class="target-controls">
+              <label class="sr-only" for="targetSize">Target compressed file size</label>
+              <select id="targetSize"><option value="">Manual quality</option><option value="100">100 KB</option><option value="250">250 KB</option><option value="500">500 KB</option><option value="1024">1 MB</option><option value="custom">Custom size</option></select>
+              <div class="custom-size hidden" id="customSizeWrap"><label for="customSize">Custom target</label><input id="customSize" type="number" min="10" max="25600" value="250" inputmode="numeric" /><span>KB</span></div>
+            </div>
+            <p class="target-hint" id="targetHint">Choose a target and we’ll preserve the best quality that fits.</p>
+          </div>
+          <div class="preview-grid">
+            <article class="image-preview"><div class="preview-label"><span>ORIGINAL</span><strong id="originalSize">—</strong></div><div class="image-stage"><img id="originalImage" alt="Original uploaded image preview" /></div></article>
+            <article class="image-preview compressed-preview"><div class="preview-label"><span>COMPRESSED</span><strong id="compressedSize">—</strong></div><div class="image-stage"><img id="compressedImage" alt="Compressed image preview" /></div><span class="saved-pill" id="savedPill">— saved</span></article>
+          </div>
+          <div class="result-actions"><p id="resultText" aria-live="polite">Preparing your image…</p><div><button type="button" class="secondary-button" id="replaceButton">Replace</button><a class="primary-button download-button" id="downloadButton" download="compressify-image.webp">Download <span>↓</span></a></div></div>
+        </div>
+      </div>
+      <p class="privacy-note">🔒 Your images never leave this device. Compression happens locally.</p>
+    </section>
+
+    <section class="benefits container"><article><span>01</span><h3>Actually private</h3><p>Your image is processed by your own browser, not uploaded anywhere.</p></article><article><span>02</span><h3>Beautifully simple</h3><p>One slider gives you control without getting in the way.</p></article><article><span>03</span><h3>Ready anywhere</h3><p>Fast, responsive and built for desktop and mobile alike.</p></article></section>
+
+    <section class="info-section container" id="faq"><div class="info-intro"><p class="eyebrow">NEED TO KNOW</p><h2>Frequently asked questions</h2><p>Everything you need to know before making your files lighter.</p></div><div class="faq-list">
+      <details open><summary>Are my images uploaded anywhere?<span>+</span></summary><p>No. Compressify uses your browser’s built-in image tools; your file stays on your device throughout.</p></details>
+      <details><summary>Which image formats work?<span>+</span></summary><p>You can upload JPG, PNG, and WebP files. Compressed downloads are delivered as efficient WebP images.</p></details>
+      <details><summary>Will compression reduce image quality?<span>+</span></summary><p>Compression is lossy, but the quality slider lets you choose the best balance for your image. Higher values preserve more detail.</p></details>
+    </div></section>
+
+    <section class="contact-section container" id="contact"><div><p class="eyebrow">SAY HELLO</p><h2>Questions, feedback, ideas?</h2><p>We’d love to hear what would make Compressify even better.</p></div><a href="mailto:hello@compressify.app" class="primary-button">Contact us <span>↗</span></a></section>
+  </main>
+
+  <footer><div class="container footer-content"><a class="brand" href="#top"><span class="brand-mark">C</span>Compressify</a><div class="footer-links"><button type="button" data-modal="privacy">Privacy Policy</button><button type="button" data-modal="terms">Terms of Service</button></div><p>Made with ❤️ by Compressify © 2026 Kartik Sharma. All Rights Reserved.</p></div></footer>
+  <dialog id="legalModal"><button class="close-modal" aria-label="Close">×</button><div id="modalContent"></div></dialog>
+  <script src="script.js"></script>
+</body>
+</html>

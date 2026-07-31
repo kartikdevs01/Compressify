@@ -65,6 +65,16 @@
       <p class="privacy-note">🔒 Your images never leave this device. Compression happens locally.</p>
     </section>
 
+    <section class="pdf-section container" id="pdf-tools" aria-labelledby="pdf-title">
+      <div class="section-heading"><div><p class="eyebrow">PDF WORKSPACE</p><h2 id="pdf-title">PDF tools, made simple</h2></div><span class="format-badge">PDF • PRIVATE</span></div>
+      <div class="pdf-tools-grid"><div class="pdf-card pdf-tool-card">
+        <div class="pdf-drop-zone" id="pdfDropZone" tabindex="0" role="button" aria-label="Choose PDF files or drop them here"><input id="pdfInput" type="file" accept="application/pdf,.pdf" multiple hidden /><div class="upload-icon">+</div><h3>Drop PDF files here</h3><p>Choose two or more files, then merge them in order.</p><button type="button" class="secondary-button" id="pdfBrowseButton">Choose PDF files</button></div>
+        <div class="pdf-workspace hidden" id="pdfWorkspace"><div class="pdf-workspace-head"><div><p class="eyebrow">YOUR PDF QUEUE</p><h3 id="pdfQueueTitle">0 files selected</h3></div><button type="button" class="secondary-button" id="clearPdfsButton">Clear all</button></div><ol class="pdf-list" id="pdfList" aria-label="PDF files in merge order"></ol><div class="pdf-actions"><p id="pdfStatus" aria-live="polite">Files are merged in the order shown.</p><button type="button" class="primary-button" id="mergePdfButton">Merge PDFs <span>→</span></button></div></div>
+      </div>
+      <article class="pdf-card pdf-tool-card split-card"><div class="tool-card-intro"><span class="tool-icon">✂</span><div><p class="eyebrow">SPLIT PDF</p><h3>Separate pages instantly</h3></div></div><div class="pdf-drop-zone compact" id="splitDropZone" tabindex="0" role="button" aria-label="Choose a PDF to split"><input id="splitPdfInput" type="file" accept="application/pdf,.pdf" hidden /><div class="upload-icon">+</div><h3>Drop one PDF here</h3><p id="splitFileName">Each page will be saved as a separate PDF.</p><button type="button" class="secondary-button" id="splitBrowseButton">Choose a PDF</button></div><div class="tool-progress hidden" id="splitProgress" aria-live="polite"><div><span id="splitProgressLabel">Preparing file</span><strong id="splitProgressValue">0%</strong></div><i><b id="splitProgressFill"></b></i></div><div class="pdf-actions"><p id="splitStatus" aria-live="polite">Select a PDF to split it page by page.</p><button type="button" class="primary-button" id="splitPdfButton" disabled>Split PDF <span>→</span></button></div></article></div>
+      <p class="privacy-note">Your PDF files are processed locally in your browser and are never uploaded.</p>
+    </section>
+
     <section class="benefits container"><article><span>01</span><h3>Actually private</h3><p>Your image is processed by your own browser, not uploaded anywhere.</p></article><article><span>02</span><h3>Beautifully simple</h3><p>One slider gives you control without getting in the way.</p></article><article><span>03</span><h3>Ready anywhere</h3><p>Fast, responsive and built for desktop and mobile alike.</p></article></section>
 
     <section class="info-section container" id="faq"><div class="info-intro"><p class="eyebrow">NEED TO KNOW</p><h2>Frequently asked questions</h2><p>Everything you need to know before making your files lighter.</p></div><div class="faq-list">
@@ -90,6 +100,7 @@
 
   <footer><div class="container footer-content"><a class="brand" href="#top"><span class="brand-mark">C</span>Compressify</a><div class="footer-links"><button type="button" data-modal="privacy">Privacy Policy</button><button type="button" data-modal="terms">Terms of Service</button></div><p>Made with ❤️ by Compressify © 2026 Kartik Sharma. All Rights Reserved.</p></div></footer>
   <dialog id="legalModal"><button class="close-modal" aria-label="Close">×</button><div id="modalContent"></div></dialog>
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

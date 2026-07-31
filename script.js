@@ -120,3 +120,35 @@ targetSize.addEventListener('change', () => { customSizeWrap.classList.toggle('h
 $('#replaceButton').addEventListener('click', () => fileInput.click()); $('#themeToggle').addEventListener('click', () => { document.body.classList.toggle('dark'); localStorage.setItem('compressify-theme', document.body.classList.contains('dark') ? 'dark' : 'light'); setRangeBackground(); }); if (localStorage.getItem('compressify-theme') === 'dark') document.body.classList.add('dark'); setRangeBackground();
 const legalCopy = { privacy: '<h2>Privacy Policy</h2><p><strong>Last updated: July 2026</strong></p><p>Compressify processes images locally in your web browser. We do not upload, store, view, or share your image files. We may store your visual theme preference in your browser using local storage.</p><p>Our site contains no account system, analytics requirement, or sale of personal data. If you contact us by email, we use your email only to respond to your message.</p>', terms: '<h2>Terms of Service</h2><p><strong>Last updated: July 2026</strong></p><p>Compressify is provided as-is for personal and commercial image optimization. You are responsible for ensuring that you have the right to use every image you process.</p><p>Because compression is a lossy process, please keep your original image. We make no guarantee that a compressed output will be smaller or suitable for every purpose.</p>' };
 const modal = $('#legalModal'); document.querySelectorAll('[data-modal]').forEach(button => button.addEventListener('click', () => { $('#modalContent').innerHTML = legalCopy[button.dataset.modal]; modal.showModal(); })); $('.close-modal').addEventListener('click', () => modal.close()); modal.addEventListener('click', event => { if (event.target === modal) modal.close(); });
+window.addEventListener('DOMContentLoaded', () => {
+  /* PDF merging stays on the device; pdf-lib supplies safe PDF page handling. */
+  const pdfInput = $('#pdfInput'), pdfDropZone = $('#pdfDropZone'), pdfBrowseButton = $('#pdfBrowseButton'), pdfWorkspace = $('#pdfWorkspace');
+  const pdfList = $('#pdfList'), pdfQueueTitle = $('#pdfQueueTitle'), pdfStatus = $('#pdfStatus'), mergePdfButton = $('#mergePdfButton'), clearPdfsButton = $('#clearPdfsButton');
+  let pdfFiles = [];
+  function renderPdfQueue() {
+    pdfList.replaceChildren(); pdfQueueTitle.textContent = `${pdfFiles.length} ${pdfFiles.length === 1 ? 'file' : 'files'} selected`;
+    pdfWorkspace.classList.toggle('hidden', !pdfFiles.length); pdfDropZone.classList.toggle('hidden', !!pdfFiles.length);
+    pdfFiles.forEach((file, index) => {
+      const item = document.createElement('li'); item.className = 'pdf-item'; const number = document.createElement('span'); number.className = 'pdf-number'; number.textContent = index + 1;
+      const details = document.createElement('div'); details.className = 'pdf-file-name'; const name = document.createElement('strong'); name.textContent = file.name; const size = document.createElement('span'); size.textContent = formatBytes(file.size); details.append(name, size);
+      const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'pdf-remove'; remove.setAttribute('aria-label', `Remove ${file.name}`); remove.textContent = '×'; remove.addEventListener('click', () => { pdfFiles.splice(index, 1); pdfStatus.textContent = pdfFiles.length ? 'Files are merged in the order shown.' : ''; renderPdfQueue(); }); item.append(number, details, remove); pdfList.append(item);
+    });
+  }
+  function addPdfFiles(files) {
+    const valid = [...files].filter(file => file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf'));
+    if (!valid.length) return alert('Please choose PDF files.'); if (valid.length !== files.length) alert('Only PDF files were added.'); pdfFiles.push(...valid); pdfStatus.textContent = 'Files are merged in the order shown.'; renderPdfQueue();
+  }
+  async function mergePdfs() {
+    if (pdfFiles.length < 2) { pdfStatus.textContent = 'Please add at least two PDF files to merge.'; return; }
+    if (!window.PDFLib) { pdfStatus.textContent = 'The PDF tool is still loading. Please check your connection and try again.'; return; }
+    mergePdfButton.disabled = true; clearPdfsButton.disabled = true;
+    try {
+      const merged = await window.PDFLib.PDFDocument.create();
+      for (let index = 0; index < pdfFiles.length; index += 1) { pdfStatus.textContent = `Merging ${index + 1} of ${pdfFiles.length} PDF files...`; const source = await window.PDFLib.PDFDocument.load(await pdfFiles[index].arrayBuffer()); const pages = await merged.copyPages(source, source.getPageIndices()); pages.forEach(page => merged.addPage(page)); }
+      const bytes = await merged.save(), link = document.createElement('a'), url = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' })); link.href = url; link.download = 'compressify-merged.pdf'; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); pdfStatus.textContent = `Success - ${pdfFiles.length} PDF files merged and downloaded.`;
+    } catch { pdfStatus.textContent = 'We could not merge one or more PDFs. Please ensure the files are valid and not password protected.'; }
+    finally { mergePdfButton.disabled = false; clearPdfsButton.disabled = false; }
+  }
+  pdfBrowseButton.addEventListener('click', event => { event.stopPropagation(); pdfInput.click(); }); pdfDropZone.addEventListener('click', () => pdfInput.click()); pdfDropZone.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') pdfInput.click(); }); pdfInput.addEventListener('change', () => { addPdfFiles(pdfInput.files); pdfInput.value = ''; });
+  ['dragenter', 'dragover'].forEach(name => pdfDropZone.addEventListener(name, event => { event.preventDefault(); pdfDropZone.classList.add('dragging'); })); ['dragleave', 'drop'].forEach(name => pdfDropZone.addEventListener(name, event => { event.preventDefault(); pdfDropZone.classList.remove('dragging'); })); pdfDropZone.addEventListener('drop', event => addPdfFiles(event.dataTransfer.files)); clearPdfsButton.addEventListener('click', () => { pdfFiles = []; pdfStatus.textContent = ''; renderPdfQueue(); }); mergePdfButton.addEventListener('click', mergePdfs);
+});

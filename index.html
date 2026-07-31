@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-<head> <meta name="google-site-verification" content="2ERfgWNwApmwoLBdaZ7znjPFm3T94KdJV72pWEegK1o" />
+<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Compressify compresses your images privately in your browser." />
@@ -31,7 +31,7 @@
       <div class="section-heading"><div><p class="eyebrow">YOUR WORKSPACE</p><h2 id="compress-title">Compress an image</h2></div><span class="format-badge">JPG · PNG · WEBP</span></div>
       <div class="compress-card">
         <div class="drop-zone" id="dropZone" tabindex="0" role="button" aria-label="Choose an image or drop it here">
-          <input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp" hidden />
+          <input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden />
           <div class="upload-icon">↑</div><h3>Drop your image here</h3><p>or <button type="button" id="browseButton">browse from your device</button></p><small>Maximum recommended size: 25 MB</small>
         </div>
         <div class="editor hidden" id="editor">
@@ -50,6 +50,11 @@
             </div>
             <p class="target-hint" id="targetHint">Choose a target and we’ll preserve the best quality that fits.</p>
           </div>
+          <section class="batch-panel hidden" id="batchPanel" aria-label="Batch compression progress">
+            <div class="batch-heading"><div><p class="eyebrow">BATCH COMPRESSION</p><h3 id="batchTitle">Preparing images</h3></div><button class="secondary-button" type="button" id="downloadAllButton" disabled>Download all (.zip)</button></div>
+            <div class="batch-list" id="batchList"></div>
+          </section>
+          <div class="single-progress hidden" id="singleProgress" aria-live="polite"><div><span id="singleProgressLabel">Optimizing image</span><strong id="singleProgressValue">0%</strong></div><i><b id="singleProgressFill"></b></i></div>
           <div class="preview-grid">
             <article class="image-preview"><div class="preview-label"><span>ORIGINAL</span><strong id="originalSize">—</strong></div><div class="image-stage"><img id="originalImage" alt="Original uploaded image preview" /></div></article>
             <article class="image-preview compressed-preview"><div class="preview-label"><span>COMPRESSED</span><strong id="compressedSize">—</strong></div><div class="image-stage"><img id="compressedImage" alt="Compressed image preview" /></div><span class="saved-pill" id="savedPill">— saved</span></article>
@@ -70,6 +75,18 @@
 
     <section class="contact-section container" id="contact"><div><p class="eyebrow">SAY HELLO</p><h2>Questions, feedback, ideas?</h2><p>We’d love to hear what would make Compressify even better.</p></div><a href="mailto:hello@compressify.app" class="primary-button">Contact us <span>↗</span></a></section>
   </main>
+
+  <section class="contact-us-section container" aria-labelledby="contact-us-title">
+    <div class="contact-us-content">
+      <p class="eyebrow">GET IN TOUCH</p>
+      <h2 id="contact-us-title">Contact Us</h2>
+      <p>For bug reports, feedback, or business inquiries:</p>
+    </div>
+    <a class="contact-email" href="mailto:bs535260@gmail.com?subject=Compressify%20Support" aria-label="Email Compressify support at bs535260@gmail.com">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 5.5h17v13h-17zM4 6l8 6 8-6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+      <span>bs535260@gmail.com</span>
+    </a>
+  </section>
 
   <footer><div class="container footer-content"><a class="brand" href="#top"><span class="brand-mark">C</span>Compressify</a><div class="footer-links"><button type="button" data-modal="privacy">Privacy Policy</button><button type="button" data-modal="terms">Terms of Service</button></div><p>Made with ❤️ by Compressify © 2026 Kartik Sharma. All Rights Reserved.</p></div></footer>
   <dialog id="legalModal"><button class="close-modal" aria-label="Close">×</button><div id="modalContent"></div></dialog>

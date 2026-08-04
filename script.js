@@ -10,12 +10,14 @@ let currentFile, originalUrl, compressedUrl, compressionTimer, compressionJob = 
 
 const formatBytes = bytes => bytes < 1048576 ? `${(bytes / 1024).toFixed(bytes < 1024 ? 0 : 1)} KB` : `${(bytes / 1048576).toFixed(2)} MB`;
 const validType = file => ['image/jpeg', 'image/png', 'image/webp'].includes(file.type);
-const makeWebp = (canvas, quality) => new Promise(resolve => canvas.toBlob(resolve, 'image/webp', quality));
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const makeBlob = (canvas, type, quality) => new Promise(resolve => canvas.toBlob(resolve, type, quality));
+const makeWebp = async (canvas, quality) => { const webp = isIOS ? null : await makeBlob(canvas, 'image/webp', quality); return webp?.type === 'image/webp' ? webp : makeBlob(canvas, 'image/jpeg', quality); };
 const loadImage = file => new Promise((resolve, reject) => { const image = new Image(); const url = URL.createObjectURL(file); image.onload = () => { URL.revokeObjectURL(url); resolve(image); }; image.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Unable to read image')); }; image.src = url; });
 
 function setRangeBackground() { const value = Number(qualitySlider.value), fill = ((value - 10) / 90) * 100; qualityOutput.value = `${value}%`; qualitySlider.style.background = `linear-gradient(90deg, var(--purple) ${fill}%, ${document.body.classList.contains('dark') ? '#474960' : '#dadbe5'} ${fill}%)`; }
 function getTargetBytes() { const selected = targetSize.value === 'custom' ? Number(customSize.value) : Number(targetSize.value); return selected > 0 ? selected * 1024 : 0; }
-function outputName(file, blob) { return `${file.name.replace(/\.[^/.]+$/, '')}-compressify.${blob.type === 'image/webp' ? 'webp' : file.name.split('.').pop()}`; }
+function outputName(file, blob) { const extension = blob.type === 'image/webp' ? 'webp' : blob.type === 'image/jpeg' ? 'jpg' : blob.type === 'image/png' ? 'png' : file.name.split('.').pop(); return `${file.name.replace(/\.[^/.]+$/, '')}-compressify.${extension}`; }
 function setSingleProgress(value, label = 'Optimizing image') { singleProgress.classList.remove('hidden'); singleProgressLabel.textContent = label; singleProgressValue.textContent = `${value}%`; singleProgressFill.style.width = `${value}%`; }
 function celebrateSuccess() { compressedImage.closest('.compressed-preview').classList.remove('success-flash'); void compressedImage.offsetWidth; compressedImage.closest('.compressed-preview').classList.add('success-flash'); }
 
@@ -32,7 +34,7 @@ async function compressFile(file, reportProgress = () => {}) {
   const target = getTargetBytes(), ceiling = Number(qualitySlider.value) / 100;
   if (target && file.size <= target) return { blob: file, warning: false, message: 'Original already meets target' };
   reportProgress(10);
-  const image = await loadImage(file), canvas = document.createElement('canvas'), maxDimension = 3200;
+  const image = await loadImage(file), canvas = document.createElement('canvas'), maxDimension = isIOS ? 2560 : 3200;
   const ratio = Math.min(1, maxDimension / Math.max(image.naturalWidth, image.naturalHeight));
   canvas.width = Math.round(image.naturalWidth * ratio); canvas.height = Math.round(image.naturalHeight * ratio);
   canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height); reportProgress(25);
@@ -155,9 +157,9 @@ window.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('DOMContentLoaded', () => {
   /* PDF Creator: images stay local and are embedded using the existing PDF library. */
   const creatorInput = $('#creatorInput'), creatorDropZone = $('#creatorDropZone'), creatorBrowseButton = $('#creatorBrowseButton'), creatorWorkspace = $('#creatorWorkspace');
-  const creatorList = $('#creatorList'), creatorQueueTitle = $('#creatorQueueTitle'), clearCreatorButton = $('#clearCreatorButton'), createPdfButton = $('#createPdfButton'), creatorStatus = $('#creatorStatus');
+  const creatorList = $('#creatorList'), creatorQueueTitle = $('#creatorQueueTitle'), clearCreatorButton = $('#clearCreatorButton'), createPdfButton = $('#createPdfButton'), creatorStatus = $('#creatorStatus'), creatorPdfDownload = $('#creatorPdfDownload');
   const creatorProgress = $('#creatorProgress'), creatorProgressFill = $('#creatorProgressFill'), creatorProgressValue = $('#creatorProgressValue'), creatorProgressLabel = $('#creatorProgressLabel');
-  let creatorFiles = [], draggedCreatorId = null;
+  let creatorFiles = [], draggedCreatorId = null, creatorPdfUrl = null;
   const acceptableImage = file => ['image/jpeg', 'image/png', 'image/webp'].includes(file.type);
   function setCreatorProgress(value, label) { creatorProgress.classList.remove('hidden'); creatorProgressValue.textContent = `${value}%`; creatorProgressFill.style.width = `${value}%`; if (label) creatorProgressLabel.textContent = label; }
   function renderCreator() {
@@ -177,9 +179,10 @@ window.addEventListener('DOMContentLoaded', () => {
     try {
       const pdf = await window.PDFLib.PDFDocument.create();
       for (let index = 0; index < creatorFiles.length; index += 1) { const file = creatorFiles[index].file; const bytes = file.type === 'image/webp' ? await toPngBytes(file) : await file.arrayBuffer(); const image = file.type === 'image/jpeg' ? await pdf.embedJpg(bytes) : await pdf.embedPng(bytes); const page = pdf.addPage([image.width, image.height]); page.drawImage(image, { x: 0, y: 0, width: image.width, height: image.height }); setCreatorProgress(Math.round(((index + 1) / creatorFiles.length) * 90) + 5, `Adding image ${index + 1} of ${creatorFiles.length}`); }
-      const bytes = await pdf.save(), url = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' })), link = document.createElement('a'); link.href = url; link.download = 'compressify-created.pdf'; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); setCreatorProgress(100, 'PDF ready'); creatorStatus.textContent = `Success - your ${creatorFiles.length}-page PDF was downloaded.`;
+      const bytes = await pdf.save(), blob = new Blob([bytes], { type: 'application/pdf' }), filename = 'compressify-created.pdf'; if (creatorPdfUrl) URL.revokeObjectURL(creatorPdfUrl); creatorPdfUrl = URL.createObjectURL(blob); creatorPdfDownload.href = creatorPdfUrl; creatorPdfDownload.download = filename; creatorPdfDownload.classList.remove('hidden'); setCreatorProgress(100, 'PDF ready');
+      if (isIOS) { let shared = false; const shareFile = new File([blob], filename, { type: 'application/pdf' }); if (navigator.canShare?.({ files: [shareFile] })) { try { await navigator.share({ files: [shareFile], title: 'Compressify PDF' }); shared = true; } catch {} } creatorStatus.textContent = shared ? `Success - your ${creatorFiles.length}-page PDF is ready.` : 'Your PDF is ready. Tap Save PDF, then choose Save to Files or Share.'; } else { const link = document.createElement('a'); link.href = creatorPdfUrl; link.download = filename; link.click(); creatorStatus.textContent = `Success - your ${creatorFiles.length}-page PDF was downloaded.`; }
     } catch { creatorStatus.textContent = 'We could not create the PDF. Please try images with smaller dimensions.'; creatorProgress.classList.add('hidden'); }
     finally { createPdfButton.disabled = !creatorFiles.length; clearCreatorButton.disabled = false; }
   }
-  creatorBrowseButton.addEventListener('click', event => { event.stopPropagation(); creatorInput.click(); }); creatorDropZone.addEventListener('click', () => creatorInput.click()); creatorDropZone.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') creatorInput.click(); }); creatorInput.addEventListener('change', () => { addCreatorFiles(creatorInput.files); creatorInput.value = ''; }); ['dragenter', 'dragover'].forEach(name => creatorDropZone.addEventListener(name, event => { event.preventDefault(); creatorDropZone.classList.add('dragging'); })); ['dragleave', 'drop'].forEach(name => creatorDropZone.addEventListener(name, event => { event.preventDefault(); creatorDropZone.classList.remove('dragging'); })); creatorDropZone.addEventListener('drop', event => addCreatorFiles(event.dataTransfer.files)); clearCreatorButton.addEventListener('click', () => { creatorFiles.forEach(item => URL.revokeObjectURL(item.url)); creatorFiles = []; creatorProgress.classList.add('hidden'); creatorStatus.textContent = 'Select images, arrange them, then create your PDF.'; renderCreator(); }); createPdfButton.addEventListener('click', createPdf);
+  creatorBrowseButton.addEventListener('click', event => { event.stopPropagation(); creatorInput.click(); }); creatorDropZone.addEventListener('click', () => creatorInput.click()); creatorDropZone.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') creatorInput.click(); }); creatorInput.addEventListener('change', () => { addCreatorFiles(creatorInput.files); creatorInput.value = ''; }); ['dragenter', 'dragover'].forEach(name => creatorDropZone.addEventListener(name, event => { event.preventDefault(); creatorDropZone.classList.add('dragging'); })); ['dragleave', 'drop'].forEach(name => creatorDropZone.addEventListener(name, event => { event.preventDefault(); creatorDropZone.classList.remove('dragging'); })); creatorDropZone.addEventListener('drop', event => addCreatorFiles(event.dataTransfer.files)); clearCreatorButton.addEventListener('click', () => { creatorFiles.forEach(item => URL.revokeObjectURL(item.url)); creatorFiles = []; if (creatorPdfUrl) URL.revokeObjectURL(creatorPdfUrl); creatorPdfUrl = null; creatorPdfDownload.classList.add('hidden'); creatorProgress.classList.add('hidden'); creatorStatus.textContent = 'Select images, arrange them, then create your PDF.'; renderCreator(); }); createPdfButton.addEventListener('click', createPdf);
 });

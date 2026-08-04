@@ -71,7 +71,7 @@
         <div class="pdf-drop-zone" id="pdfDropZone" tabindex="0" role="button" aria-label="Choose PDF files or drop them here"><input id="pdfInput" type="file" accept="application/pdf,.pdf" multiple hidden /><div class="upload-icon">+</div><h3>Drop PDF files here</h3><p>Choose two or more files, then merge them in order.</p><button type="button" class="secondary-button" id="pdfBrowseButton">Choose PDF files</button></div>
         <div class="pdf-workspace hidden" id="pdfWorkspace"><div class="pdf-workspace-head"><div><p class="eyebrow">YOUR PDF QUEUE</p><h3 id="pdfQueueTitle">0 files selected</h3></div><button type="button" class="secondary-button" id="clearPdfsButton">Clear all</button></div><ol class="pdf-list" id="pdfList" aria-label="PDF files in merge order"></ol><div class="pdf-actions"><p id="pdfStatus" aria-live="polite">Files are merged in the order shown.</p><button type="button" class="primary-button" id="mergePdfButton">Merge PDFs <span>→</span></button></div></div>
       </div>
-      <article class="pdf-card pdf-tool-card split-card"><div class="tool-card-intro"><span class="tool-icon">✂</span><div><p class="eyebrow">SPLIT PDF</p><h3>Separate pages instantly</h3></div></div><div class="pdf-drop-zone compact" id="splitDropZone" tabindex="0" role="button" aria-label="Choose a PDF to split"><input id="splitPdfInput" type="file" accept="application/pdf,.pdf" hidden /><div class="upload-icon">+</div><h3>Drop one PDF here</h3><p id="splitFileName">Each page will be saved as a separate PDF.</p><button type="button" class="secondary-button" id="splitBrowseButton">Choose a PDF</button></div><div class="tool-progress hidden" id="splitProgress" aria-live="polite"><div><span id="splitProgressLabel">Preparing file</span><strong id="splitProgressValue">0%</strong></div><i><b id="splitProgressFill"></b></i></div><div class="pdf-actions"><p id="splitStatus" aria-live="polite">Select a PDF to split it page by page.</p><button type="button" class="primary-button" id="splitPdfButton" disabled>Split PDF <span>→</span></button></div></article></div>
+      <article class="pdf-card pdf-tool-card creator-card"><div class="tool-card-intro"><span class="tool-icon">▧</span><div><p class="eyebrow">PDF CREATOR</p><h3>Turn images into one PDF</h3></div></div><div class="pdf-drop-zone compact" id="creatorDropZone" tabindex="0" role="button" aria-label="Choose images to create a PDF"><input id="creatorInput" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden /><div class="upload-icon">+</div><h3>Drop your images here</h3><p>Add JPG, PNG, or WebP images in any order.</p><button type="button" class="secondary-button" id="creatorBrowseButton">Choose images</button></div><div class="creator-workspace hidden" id="creatorWorkspace"><div class="pdf-workspace-head"><div><p class="eyebrow">IMAGE ORDER</p><h3 id="creatorQueueTitle">0 images selected</h3></div><button type="button" class="secondary-button" id="clearCreatorButton">Clear all</button></div><ol class="creator-list" id="creatorList" aria-label="Images in PDF order"></ol></div><div class="tool-progress hidden" id="creatorProgress" aria-live="polite"><div><span id="creatorProgressLabel">Preparing images</span><strong id="creatorProgressValue">0%</strong></div><i><b id="creatorProgressFill"></b></i></div><div class="pdf-actions"><p id="creatorStatus" aria-live="polite">Select images, arrange them, then create your PDF.</p><button type="button" class="primary-button" id="createPdfButton" disabled>Create PDF <span>→</span></button></div></article></div>
       <p class="privacy-note">Your PDF files are processed locally in your browser and are never uploaded.</p>
     </section>
 
@@ -83,7 +83,7 @@
       <details><summary>Will compression reduce image quality?<span>+</span></summary><p>Compression is lossy, but the quality slider lets you choose the best balance for your image. Higher values preserve more detail.</p></details>
     </div></section>
 
-    <section class="contact-section container" id="contact"><div><p class="eyebrow">SAY HELLO</p><h2>Questions, feedback, ideas?</h2><p>We’d love to hear what would make Compressify even better.</p></div><a href="mailto:hello@compressify.app" class="primary-button">Contact us <span>↗</span></a></section>
+    <section class="contact-section container" id="contact"><div><p class="eyebrow">SAY HELLO</p><h2>Questions, feedback, ideas?</h2><p>We’d love to hear what would make Compressify even better.</p></div><a href="mailto:getcompressify@gmail.com?subject=Compressify%20Support" class="primary-button">Contact us <span>↗</span></a></section>
   </main>
 
   <section class="contact-us-section container" aria-labelledby="contact-us-title">
@@ -92,9 +92,9 @@
       <h2 id="contact-us-title">Contact Us</h2>
       <p>For bug reports, feedback, or business inquiries:</p>
     </div>
-    <a class="contact-email" href="mailto:bs535260@gmail.com?subject=Compressify%20Support" aria-label="Email Compressify support at bs535260@gmail.com">
+    <a class="contact-email" href="mailto:getcompressify@gmail.com?subject=Compressify%20Support" aria-label="Email Compressify support at getcompressify@gmail.com">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 5.5h17v13h-17zM4 6l8 6 8-6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
-      <span>bs535260@gmail.com</span>
+      <span>getcompressify@gmail.com</span>
     </a>
   </section>
 

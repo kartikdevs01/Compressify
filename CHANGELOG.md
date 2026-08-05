@@ -1,5 +1,11 @@
 # Compressify Changelog
 
+## 2026-08-05
+
+- `index.html` — Added the Compressify AI Resume Builder workspace, local sign-up/login, live resume preview, templates, and updated the footer attribution.
+- `style.css` — Added responsive Resume Builder, authentication, dashboard, editor, preview, and notification styles for light and dark modes.
+- `script.js` — Added browser-local account/resume saving, editing, duplication, smart offline writing suggestions, and PDF resume export.
+
 ## 2026-08-04
 
 - `index.html` — Replaced the Split PDF card with PDF Creator and grouped Merge PDF and PDF Creator in one responsive PDF tools grid.
